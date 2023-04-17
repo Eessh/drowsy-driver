@@ -2,6 +2,8 @@
 
 Driver drowsiness detection using facial landmanrks, and modified aspect ratios, with support for calibration of ratios according to the user.
 
+![Yawning screenshot](screenshots/yawning.png)
+
 ### Running
 - Clone
   ```bash
