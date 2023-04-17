@@ -1,0 +1,14 @@
+[draw_landmarks]
+face = true
+eye = true
+mouth = true
+
+[thresholds]
+eye_aspect_ratio = 0.15
+magic_ratio = 200
+mouth_aspect_ratio = 0.4
+
+[show_ratios]
+eye_aspect_ratio = true
+magic_ratio = true
+mouth_aspect_ratio = true
