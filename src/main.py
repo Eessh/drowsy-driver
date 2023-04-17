@@ -11,7 +11,7 @@ import ratio_utils
 import drawing_utils
 
 # Detection utility functions
-def landmarks_detection(image, results, draw_detection_points=False, color=colors.COLOR_GREEN):
+def landmarks_detection(image, results, draw_detection_points=False, color=colors.GREEN):
 	"""
     Detects facial landmarks on an input image using a pre-trained facial landmark detection model.
 
@@ -21,7 +21,7 @@ def landmarks_detection(image, results, draw_detection_points=False, color=color
         draw_detection_points (bool, optional): Whether to draw the detected landmark points on the image. 
                                                 Defaults to False.
         color (tuple, optional): The color of the drawn landmark points, specified as a tuple of (B, G, R) values. 
-                                 Defaults to color.COLOR_GREEN.
+                                 Defaults to color.GREEN.
 
     Returns:
         list of tuple: A list of tuples representing the coordinates of the detected facial landmarks in the format (x, y),
@@ -92,15 +92,15 @@ while True:
 		mesh_coordinates = landmarks_detection(frame, results, draw_detection_points=False)
 		if config["draw_landmarks"]["face"]:
 			for point in mesh_coordinates:
-				cv.circle(frame, point, 1, colors.COLOR_CYAN, -1, cv.LINE_AA)
+				cv.circle(frame, point, 1, colors.CYAN, -1, cv.LINE_AA)
 		if config["draw_landmarks"]["eye"]:
 			for index in mesh_indices.left_eye:
-				cv.circle(frame, mesh_coordinates[index], 1, colors.COLOR_GREEN, -1, cv.LINE_AA)
+				cv.circle(frame, mesh_coordinates[index], 1, colors.GREEN, -1, cv.LINE_AA)
 			for index in mesh_indices.right_eye:
-				cv.circle(frame, mesh_coordinates[index], 1, colors.COLOR_GREEN, -1, cv.LINE_AA)
+				cv.circle(frame, mesh_coordinates[index], 1, colors.GREEN, -1, cv.LINE_AA)
 		if config["draw_landmarks"]["mouth"]:
 			for index in mesh_indices.mouth:
-				cv.circle(frame, mesh_coordinates[index], 1, colors.COLOR_MAGNETA, -1, cv.LINE_AA)
+				cv.circle(frame, mesh_coordinates[index], 1, colors.MAGNETA, -1, cv.LINE_AA)
 
 		# Calculating eye aspect ratios
 		left_eye_aspect_ratio = ratio_utils.eye_aspect_ratio([mesh_coordinates[index] for index in mesh_indices.left_eye])
@@ -119,8 +119,8 @@ while True:
 								frame,
 								f"(Left, Right) Eye Aspect Ratios: ({round(left_eye_aspect_ratio,3)}, {round(right_eye_aspect_ratio,3)})",
 								(0, 0),
-								text_color=colors.COLOR_GREEN,
-								background_color=colors.COLOR_BLACK,
+								text_color=colors.GREEN,
+								background_color=colors.BLACK,
 								background_opacity=0.8
 							)
 		if config["show_ratios"]["magic_ratio"]:
@@ -128,8 +128,8 @@ while True:
 								frame,
 								f"(Left, Right) Magic Ratios: ({round(left_eye_magic_ratio,3)}, {round(right_eye_magic_ratio,3)})",
 								(0, 23),
-								text_color=colors.COLOR_GREEN,
-								background_color=colors.COLOR_BLACK,
+								text_color=colors.GREEN,
+								background_color=colors.BLACK,
 								background_opacity=0.8
 							)
 		if config["show_ratios"]["mouth_aspect_ratio"]:
@@ -137,8 +137,8 @@ while True:
 								frame,
 								f"Mouth Aspect Ratio: {round(mouth_aspect_ratio, 3)}",
 								(0, 46),
-								text_color=colors.COLOR_GREEN,
-								background_color=colors.COLOR_BLACK,
+								text_color=colors.GREEN,
+								background_color=colors.BLACK,
 								background_opacity=0.8
 							)
 
@@ -148,8 +148,8 @@ while True:
 								frame,
 								"Eyes: OPEN",
 								(0, 69),
-								text_color=colors.COLOR_BLACK,
-								background_color=colors.COLOR_GREEN,
+								text_color=colors.BLACK,
+								background_color=colors.GREEN,
 								background_opacity=0.8
 							)
 		else:
@@ -157,8 +157,8 @@ while True:
 								frame,
 								"Eyes: CLOSE",
 								(0, 69),
-								text_color=colors.COLOR_WHITE,
-								background_color=colors.COLOR_RED,
+								text_color=colors.WHITE,
+								background_color=colors.RED,
 								background_opacity=0.8
 							)
 
@@ -168,8 +168,8 @@ while True:
 								frame,
 								"Mouth: NORMAL",
 								(0, 92),
-								text_color=colors.COLOR_BLACK,
-								background_color=colors.COLOR_GREEN,
+								text_color=colors.BLACK,
+								background_color=colors.GREEN,
 								background_opacity=0.8
 							)
 		else:
@@ -177,8 +177,8 @@ while True:
 								frame,
 								"Mouth: YAWNING",
 								(0, 92),
-								text_color=colors.COLOR_WHITE,
-								background_color=colors.COLOR_RED,
+								text_color=colors.WHITE,
+								background_color=colors.RED,
 								background_opacity=0.8
 							)
 
