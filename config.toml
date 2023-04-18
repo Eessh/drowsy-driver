@@ -1,3 +1,7 @@
+[draw_info]
+resolution = false
+fps = true
+
 [draw_landmarks]
 face = true
 eye = true

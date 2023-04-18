@@ -124,7 +124,8 @@ while True:
 		fps = frame_counter / end_time
 
 		# Drawing FPS
-		frame = drawing_utils.text(frame, f"FPS: {round(fps, 1)}", (width-80, 0))
+		if config["draw_info"]["fps"]:
+			frame = drawing_utils.text(frame, f"FPS: {round(fps, 1)}", (width-80, 0))
 
 		# Drawing ratios
 		if config["show_ratios"]["eye_aspect_ratio"]:
