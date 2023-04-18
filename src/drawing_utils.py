@@ -3,7 +3,7 @@
 import cv2 as cv
 import colors
 
-def text(image, text, text_position, text_color=colors.COLOR_BLACK):
+def text(image, text, text_position, text_color=colors.BLACK):
 	"""
     Draws text on an input image.
 
@@ -46,7 +46,7 @@ def text(image, text, text_position, text_color=colors.COLOR_BLACK):
 	cv.putText(image, text, (x, y+text_height), cv.FONT_HERSHEY_SIMPLEX, 0.5, text_color, 1)
 	return image
 
-def text_with_background(image, text, position, text_color=colors.COLOR_WHITE, background_color=colors.COLOR_GRAY, background_opacity=1.0, padding_x=5, padding_y=5):
+def text_with_background(image, text, position, text_color=colors.WHITE, background_color=colors.GRAY, background_opacity=1.0, padding_x=5, padding_y=5):
 	"""
     Draws text on an input image with a background box.
 

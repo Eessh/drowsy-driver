@@ -1,8 +1,7 @@
 # Imports
-import math
+import time
 import tomli
 import cv2 as cv
-import numpy as np
 import mediapipe as mp
 
 import colors
@@ -66,6 +65,10 @@ face_mesh = mp.solutions.face_mesh.FaceMesh(min_detection_confidence=0.5, min_tr
 
 # Start capturing video
 camera = cv.VideoCapture(0)
+width = int(camera.get(cv.CAP_PROP_FRAME_WIDTH)) # 3
+height = int(camera.get(cv.CAP_PROP_FRAME_HEIGHT)) # 4
+print(f"Video Resolution: ({width}, {height})")
+frame_counter = 0
 
 # Loading config
 config_file = open("config.toml", mode="rb")
@@ -80,10 +83,13 @@ MAGIC_RATIO_THRESHOLD = config["thresholds"]["magic_ratio"] # Magic Ratio thresh
 MOUTH_ASPECT_RATIO_THRESHOLD = config["thresholds"]["mouth_aspect_ratio"]
 
 # Main loop
+start_time = time.time()
 while True:
 	frame_read_successful, frame = camera.read()
 	if not frame_read_successful:
 		break
+
+	frame_counter += 1
 
 	rgb_frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
 	results = face_mesh.process(rgb_frame)
@@ -112,6 +118,13 @@ while True:
 
 		# Calculating mouth aspect ratio
 		mouth_aspect_ratio = ratio_utils.mouth_aspect_ratio([mesh_coordinates[index] for index in mesh_indices.mouth])
+
+		# Calculating FPS
+		end_time = time.time() - start_time
+		fps = frame_counter / end_time
+
+		# Drawing FPS
+		frame = drawing_utils.text(frame, f"FPS: {round(fps, 1)}", (width-80, 0))
 
 		# Drawing ratios
 		if config["show_ratios"]["eye_aspect_ratio"]:
