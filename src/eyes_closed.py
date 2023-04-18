@@ -2,54 +2,76 @@
 
 class EyesClosed:
     """
-    Class to track the number of frames where eyes are closed and trigger an alarm if the threshold is exceeded.
+    Class to track the duration of eyes closed events and trigger an alarm if the duration exceeds a threshold.
 
     Attributes:
-        frames (int): The current count of frames where eyes are closed.
-        frames_threshold (int): The threshold value for the number of frames where eyes are closed before triggering an alarm.
+        frames (int): The current count of frames where eyes closed events are detected.
+        time_threshold (int): The threshold value for the duration of eyes closed events in seconds before triggering an alarm.
         alarm_wav_file_path (str): The file path of the warning sound file in WAV format.
 
     Methods:
-        __init__(self, frames_threshold: int, alarm_wav_file_path: str) -> None:
-            Constructor to initialize the EyesClosed object.
+        __init__(self, time_threshold: int, alarm_wav_file_path: str) -> None:
+            Constructor to initialize the EyesClosed class.
 
             Args:
-                frames_threshold (int): The threshold value for the number of frames where eyes are closed before triggering an alarm.
+                time_threshold (int): The threshold value for the duration of eyes closed events in seconds before triggering an alarm.
                 alarm_wav_file_path (str): The file path of the warning sound file in WAV format.
 
-        add_frame(self) -> None:
-            Method to increment the frames count when eyes are closed. If the frames count exceeds the threshold,
-            it triggers the alarm.
+        add_frame(self, fps: int) -> None:
+            Method to increment the frames count when an eyes closed event is detected.
+
+            Args:
+                fps (int): The frames per second of the video or stream being processed.
+
+            Returns:
+                None
+
+            Notes:
+                - The `add_frame()` method should be called for each frame where an eyes closed event is detected.
+                - If the duration of eyes closed events exceeds the time threshold, it triggers the alarm.
 
         reset(self) -> None:
             Method to reset the frames count to 0.
 
+            Returns:
+                None
+
         trigger_alarm(self) -> None:
-            Method to trigger the alarm when the frames count exceeds the threshold.
+            Method to trigger the alarm when the duration of eyes closed events exceeds the time threshold.
             You can implement the logic to play the warning sound here using a sound library or system commands.
-            For example, using PyDub library, or system commands to play the sound.
 
-    Usage:
-        eyes_closed = EyesClosed(frames_threshold=20, alarm_wav_file_path='path/to/alarm.wav')
-        # Call the add_frame() method for each frame where eyes are closed.
-        # When the frames count exceeds the threshold, the trigger_alarm() method will be called to play the alarm.
-        eyes_closed.add_frame()
-        # Call the reset() method to reset the frames count to 0 if needed.
-        eyes_closed.reset()
+            Returns:
+                None
 
-    Note:
-        - Please make sure to install the necessary libraries (e.g. PyDub) and provide a valid file path to the warning sound file in WAV format when using this class in your application.
-        - You may need to implement the logic for playing the warning sound in the `trigger_alarm()` method using an appropriate sound library or system commands depending on your specific environment and requirements.
-        - Adjust the frames_threshold value to suit your needs. A higher value will require more consecutive frames of closed eyes before triggering the alarm, while a lower value will trigger the alarm sooner.
-        - You can customize the trigger_alarm() method to implement the desired action when the alarm is triggered, such as playing a sound, displaying a notification, or sending an alert.
+            Notes:
+                - Please make sure to install the necessary libraries (e.g. PyDub) and provide a valid file path to the warning sound file in WAV format when using this class in your application.
+                - You may need to implement the logic for playing the warning sound in the `trigger_alarm()` method using an appropriate sound library or system commands depending on your specific environment and requirements.
+                - Adjust the time_threshold value to suit your needs. A higher value will require longer duration of eyes closed events before triggering the alarm, while a lower value will trigger the alarm sooner.
+                - You can customize the `trigger_alarm()` method to implement the desired action when the alarm is triggered, such as playing a sound, displaying a notification, or sending an alert.
+
+    Example Usage:
+        # Create an instance of EyesClosed with a time threshold of 5 seconds and the path to the alarm sound file
+        eyes_closed_detector = EyesClosed(time_threshold=5, alarm_wav_file_path="/path/to/alarm.wav")
+
+        # Process frames and call add_frame() for each frame where eyes closed event is detected
+        for frame in frames:
+            if eyes_closed_detected(frame):
+                eyes_closed_detector.add_frame(fps)
+
+        # Reset the frames count
+        eyes_closed_detector.reset()
+
+        # Implement your logic to trigger the alarm when necessary
+        if need_to_trigger_alarm():
+            eyes_closed_detector.trigger_alarm()
     """
 
-    def __init__(self, frames_threshold: int, alarm_wav_file_path: str) -> None:
+    def __init__(self, time_threshold: int, alarm_wav_file_path: str) -> None:
         """
         Initializes a new instance of the EyesClosed class with the specified frames threshold and alarm sound file path.
 
         Args:
-            frames_threshold (int): The threshold value of frames to trigger the alarm.
+            time_threshold (int): The threshold value of time in seconds to trigger the alarm.
             alarm_wav_file_path (str): The file path of the warning sound file in WAV format.
 
         Returns:
@@ -59,23 +81,23 @@ class EyesClosed:
             None.
         """
         self.frames: int = 0
-        self.frames_threshold: int = frames_threshold
+        self.time_threshold: int = time_threshold
 
-    def add_frame(self) -> None:
+    def add_frame(self, fps: int) -> None:
         """
-        Adds a closed eyes frame to the frame count. If the frame count exceeds the threshold, triggers the alarm.
+        Adds a closed eyes frame to the frame count. If the duration of eyes closed events exceeds the time threshold, it triggers the alarm.
 
         Args:
-            None.
+            fps (int): The frames per second of the video or stream being processed.
 
         Returns:
-            None.
+            None
 
         Raises:
             None.
         """
         self.frames += 1
-        if self.frames > self.frames_threshold:
+        if self.frames > self.time_threshold*fps:
             self.trigger_alarm()
 
     def reset(self) -> None:
@@ -95,7 +117,7 @@ class EyesClosed:
 
     def trigger_alarm(self) -> None:
         """
-        Plays the sleeping alaram sound to trigger the alarm.
+        Plays the sleepy alaram sound.
 
         Args:
             None.
@@ -107,4 +129,4 @@ class EyesClosed:
             None.
         """
         # play sleepy alaram sound
-        pass
+        print("ALARM: EYES CLOSED ALARM")

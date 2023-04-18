@@ -2,56 +2,54 @@
 
 class Yawn:
     """
-    Class representing a yawn detection mechanism.
-
-    This class monitors the occurrence of yawns by counting the number of frames where a yawn is detected. When the
-    frame count exceeds a given threshold, it triggers an alarm by playing a warning sound.
+    Class to track the duration of yawn events and trigger an alarm if the duration exceeds a threshold.
 
     Attributes:
-        frames (int): The current count of frames where a yawn is detected.
-        frames_threshold (int): The threshold value of frames to trigger the alarm.
+        frames (int): The current count of frames where a yawn event is detected.
+        time_threshold (int): The threshold value for the duration of yawn events in seconds before triggering an alarm.
         alarm_wav_file_path (str): The file path of the warning sound file in WAV format.
 
     Methods:
-        __init__(self, frames_threshold: int, alarm_wav_file_path: str) -> None:
-            Initializes a new instance of the Yawn class with the specified frames threshold and alarm sound file path.
-        
-        add_frame(self) -> None:
-            Adds a yawn frame to the frame count. If the frame count exceeds the threshold, triggers the alarm.
+        __init__(self, time_threshold: int, alarm_wav_file_path: str) -> None:
+            Constructor to initialize the Yawn object.
+
+            Args:
+                time_threshold (int): The threshold value for the duration of yawn events in seconds before triggering an alarm.
+                alarm_wav_file_path (str): The file path of the warning sound file in WAV format.
+
+        add_frame(self, fps: int) -> None:
+            Method to increment the frames count when a yawn event is detected. The `fps` parameter is the frames per second
+            of the video or stream being processed. If the duration of yawn events exceeds the time threshold, it triggers the alarm.
 
         reset(self) -> None:
-            Resets the frame count back to zero.
-        
+            Method to reset the frames count to 0.
+
         trigger_alarm(self) -> None:
-            Plays the warning sound to trigger the alarm.
+            Method to trigger the alarm when the duration of yawn events exceeds the time threshold.
+            You can implement the logic to play the warning sound here using a sound library or system commands.
+            For example, using PyDub library, or system commands to play the sound.
 
-    Example usage:
-        # Initialize yawn detector with frames threshold and alarm sound file path
-        yawn_detector = Yawn(frames_threshold=5, alarm_wav_file_path='warning.wav')
-
-        # Loop over frames and detect yawns
-        for frame in frames:
-            if is_yawn_detected(frame):
-                yawn_detector.add_frame()
-            else:
-                yawn_detector.reset()
+    Usage:
+        yawn_detector = Yawn(time_threshold=5, alarm_wav_file_path='path/to/alarm.wav')
+        # Call the add_frame() method for each frame where a yawn event is detected.
+        # When the duration of yawn events exceeds the time threshold, the trigger_alarm() method will be called to play the alarm.
+        yawn_detector.add_frame(fps=30)  # Assuming 30 frames per second
+        # Call the reset() method to reset the frames count to 0 if needed.
+        yawn_detector.reset()
 
     Note:
-        - The Yawn class is designed to be used as part of a larger system that captures and processes video frames to detect
-          yawns in real-time or near-real-time.
-        - The frames_threshold attribute specifies the number of consecutive yawn frames required to trigger the alarm.
-        - The alarm_wav_file_path attribute should be a valid file path to the warning sound file in WAV format.
-        - The add_frame method is used to increment the frame count and trigger the alarm if the threshold is exceeded.
-        - The reset method can be used to reset the frame count back to zero.
-        - The trigger_alarm method is responsible for playing the warning sound to indicate the occurrence of a yawn.
+        - Please make sure to install the necessary libraries (e.g. PyDub) and provide a valid file path to the warning sound file in WAV format when using this class in your application.
+        - You may need to implement the logic for playing the warning sound in the `trigger_alarm()` method using an appropriate sound library or system commands depending on your specific environment and requirements.
+        - Adjust the time_threshold value to suit your needs. A higher value will require longer duration of yawn events before triggering the alarm, while a lower value will trigger the alarm sooner.
+        - You can customize the trigger_alarm() method to implement the desired action when the alarm is triggered, such as playing a sound, displaying a notification, or sending an alert.
     """
 
-    def __init__(self, frames_threshold: int, alarm_wav_file_path: str) -> None:
+    def __init__(self, time_threshold: int, alarm_wav_file_path: str) -> None:
         """
         Initializes a new instance of the Yawn class with the specified frames threshold and alarm sound file path.
 
         Args:
-            frames_threshold (int): The threshold value of frames to trigger the alarm.
+            time_threshold (int): The threshold value of time in seconds to trigger the alarm.
             alarm_wav_file_path (str): The file path of the warning sound file in WAV format.
 
         Returns:
@@ -61,11 +59,11 @@ class Yawn:
             None.
         """
         self.frames: int = 0
-        self.frames_threshold: int = frames_threshold
+        self.time_threshold: int = time_threshold
 
-    def add_frame(self) -> None:
+    def add_frame(self, fps: int) -> None:
         """
-        Adds a yawn frame to the frame count. If the frame count exceeds the threshold, triggers the alarm.
+        Adds a yawn frame to the frame count. If the duration of frames added exceeds the time threshold, triggers the alarm.
 
         Args:
             None.
@@ -77,7 +75,7 @@ class Yawn:
             None.
         """
         self.frames += 1
-        if self.frames > self.frames_threshold:
+        if self.frames > self.time_threshold*fps:
             self.trigger_alarm()
 
     def reset(self) -> None:
@@ -97,7 +95,7 @@ class Yawn:
 
     def trigger_alarm(self) -> None:
         """
-        Plays the warning sound to trigger the alarm.
+        Plays the yawn warning alaram sound to trigger the alarm.
 
         Args:
             None.
@@ -109,4 +107,4 @@ class Yawn:
             None.
         """
         # play yawing warning alaram sound
-        pass
+        print("ALARM: YAWN WARNING")
