@@ -73,14 +73,14 @@ frame_counter = 0
 # Loading config
 config_file = open("config.toml", mode="rb")
 config = tomli.load(config_file)
-print("Eye Aspect Ratio Threshold: " + str(config["thresholds"]["eye_aspect_ratio"]))
-print("Magic Ratio Threshold: " + str(config["thresholds"]["magic_ratio"]))
-print("Mouth Aspect Ratio Threshold: " + str(config["thresholds"]["mouth_aspect_ratio"]))
+print("Eye Aspect Ratio Threshold: " + str(config["ratio_thresholds"]["eye_aspect_ratio"]))
+print("Magic Ratio Threshold: " + str(config["ratio_thresholds"]["magic_ratio"]))
+print("Mouth Aspect Ratio Threshold: " + str(config["ratio_thresholds"]["mouth_aspect_ratio"]))
 
 # Thresholds
-EYE_ASPECT_RATIO_THRESHOLD = config["thresholds"]["eye_aspect_ratio"]
-MAGIC_RATIO_THRESHOLD = config["thresholds"]["magic_ratio"] # Magic Ratio threshold varies according to person's distance from the camera.
-MOUTH_ASPECT_RATIO_THRESHOLD = config["thresholds"]["mouth_aspect_ratio"]
+EYE_ASPECT_RATIO_THRESHOLD = config["ratio_thresholds"]["eye_aspect_ratio"]
+MAGIC_RATIO_THRESHOLD = config["ratio_thresholds"]["magic_ratio"] # Magic Ratio threshold varies according to person's distance from the camera.
+MOUTH_ASPECT_RATIO_THRESHOLD = config["ratio_thresholds"]["mouth_aspect_ratio"]
 
 # Main loop
 start_time = time.time()
