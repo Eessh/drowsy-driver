@@ -17,7 +17,7 @@ class Yawn:
                 time_threshold (int): The threshold value for the duration of yawn events in seconds before triggering an alarm.
                 alarm_wav_file_path (str): The file path of the warning sound file in WAV format.
 
-        add_frame(self, fps: int) -> None:
+        add_frame(self, fps: float) -> None:
             Method to increment the frames count when a yawn event is detected. The `fps` parameter is the frames per second
             of the video or stream being processed. If the duration of yawn events exceeds the time threshold, it triggers the alarm.
 
@@ -61,7 +61,7 @@ class Yawn:
         self.frames: int = 0
         self.time_threshold: int = time_threshold
 
-    def add_frame(self, fps: int) -> None:
+    def add_frame(self, fps: float) -> None:
         """
         Adds a yawn frame to the frame count. If the duration of frames added exceeds the time threshold, triggers the alarm.
 
@@ -95,7 +95,7 @@ class Yawn:
 
     def trigger_alarm(self) -> None:
         """
-        Plays the yawn warning alaram sound to trigger the alarm.
+        Plays the yawn warning alaram sound.
 
         Args:
             None.

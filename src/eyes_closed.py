@@ -17,11 +17,11 @@ class EyesClosed:
                 time_threshold (int): The threshold value for the duration of eyes closed events in seconds before triggering an alarm.
                 alarm_wav_file_path (str): The file path of the warning sound file in WAV format.
 
-        add_frame(self, fps: int) -> None:
+        add_frame(self, fps: float) -> None:
             Method to increment the frames count when an eyes closed event is detected.
 
             Args:
-                fps (int): The frames per second of the video or stream being processed.
+                fps (float): The frames per second of the video or stream being processed.
 
             Returns:
                 None
@@ -83,7 +83,7 @@ class EyesClosed:
         self.frames: int = 0
         self.time_threshold: int = time_threshold
 
-    def add_frame(self, fps: int) -> None:
+    def add_frame(self, fps: float) -> None:
         """
         Adds a closed eyes frame to the frame count. If the duration of eyes closed events exceeds the time threshold, it triggers the alarm.
 

@@ -8,6 +8,8 @@ import colors
 import mesh_indices
 import ratio_utils
 import drawing_utils
+import eyes_closed
+import yawn
 
 # Detection utility functions
 def landmarks_detection(image, results, draw_detection_points=False, color=colors.GREEN):
@@ -77,10 +79,17 @@ print("Eye Aspect Ratio Threshold: " + str(config["ratio_thresholds"]["eye_aspec
 print("Magic Ratio Threshold: " + str(config["ratio_thresholds"]["magic_ratio"]))
 print("Mouth Aspect Ratio Threshold: " + str(config["ratio_thresholds"]["mouth_aspect_ratio"]))
 
-# Thresholds
+# Ratio Thresholds
 EYE_ASPECT_RATIO_THRESHOLD = config["ratio_thresholds"]["eye_aspect_ratio"]
 MAGIC_RATIO_THRESHOLD = config["ratio_thresholds"]["magic_ratio"] # Magic Ratio threshold varies according to person's distance from the camera.
 MOUTH_ASPECT_RATIO_THRESHOLD = config["ratio_thresholds"]["mouth_aspect_ratio"]
+
+# Time Thresholds
+EYES_CLOSED_TIME_THRESHOLD = config["time_thresholds"]["eyes_closed"]
+YAWN_TIME_THRESHOLD = config["time_thresholds"]["yawn"]
+
+eyes_closed_alarm = eyes_closed.EyesClosed(time_threshold=EYES_CLOSED_TIME_THRESHOLD, alarm_wav_file_path="")
+yawn_alarm = yawn.Yawn(time_threshold=YAWN_TIME_THRESHOLD, alarm_wav_file_path="")
 
 # Main loop
 start_time = time.time()
@@ -166,6 +175,7 @@ while True:
 								background_color=colors.GREEN,
 								background_opacity=0.8
 							)
+			eyes_closed_alarm.reset()
 		else:
 			frame = drawing_utils.text_with_background(
 								frame,
@@ -175,6 +185,7 @@ while True:
 								background_color=colors.RED,
 								background_opacity=0.8
 							)
+			eyes_closed_alarm.add_frame(fps)
 
 		# Deciding mouth yawning or normal
 		if mouth_aspect_ratio <= MOUTH_ASPECT_RATIO_THRESHOLD:
@@ -186,6 +197,7 @@ while True:
 								background_color=colors.GREEN,
 								background_opacity=0.8
 							)
+			yawn_alarm.reset()
 		else:
 			frame = drawing_utils.text_with_background(
 								frame,
@@ -195,6 +207,7 @@ while True:
 								background_color=colors.RED,
 								background_opacity=0.8
 							)
+			yawn_alarm.add_frame(fps)
 
 	cv.imshow("Drowsy Driver", frame)
 
