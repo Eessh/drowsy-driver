@@ -150,3 +150,8 @@ class EyesClosed:
         if self.alarm_audio_instance:
             if self.alarm_audio_instance.is_playing():
                 self.alarm_audio_instance.stop()
+
+    def is_playing(self) -> bool:
+        if self.alarm_audio_instance:
+            return self.alarm_audio_instance.is_playing()
+        return False
