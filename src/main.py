@@ -214,6 +214,9 @@ while True:
 	key_pressed = cv.waitKey(1)
 	if key_pressed == ord('q'):
 		break
+	if key_pressed == ord(' '):
+		eyes_closed_alarm.stop_alarm()
+		yawn_alarm.stop_alarm()
 
 # Cleaning up resources used
 cv.destroyAllWindows()

@@ -96,6 +96,10 @@ class Yawn:
             None.
         """
         self.frames = 0
+        if self.alarm_audio_instance:
+            if self.alarm_audio_instance.is_playing():
+                self.alarm_audio_instance.stop()
+            self.alarm_audio_instance = None
 
     def trigger_alarm(self) -> None:
         """
@@ -119,3 +123,8 @@ class Yawn:
         else:
             self.alarm_audio_instance = self.alarm_wav_obj.play()
             # self.alarm_audio_instance.wait_done()
+
+    def stop_alarm(self) -> None:
+        if self.alarm_audio_instance:
+            if self.alarm_audio_instance.is_playing():
+                self.alarm_audio_instance.stop()
