@@ -88,8 +88,8 @@ MOUTH_ASPECT_RATIO_THRESHOLD = config["ratio_thresholds"]["mouth_aspect_ratio"]
 EYES_CLOSED_TIME_THRESHOLD = config["time_thresholds"]["eyes_closed"]
 YAWN_TIME_THRESHOLD = config["time_thresholds"]["yawn"]
 
-eyes_closed_alarm = eyes_closed.EyesClosed(time_threshold=EYES_CLOSED_TIME_THRESHOLD, alarm_wav_file_path="")
-yawn_alarm = yawn.Yawn(time_threshold=YAWN_TIME_THRESHOLD, alarm_wav_file_path="")
+eyes_closed_alarm = eyes_closed.EyesClosed(time_threshold=EYES_CLOSED_TIME_THRESHOLD, alarm_wav_file_path="assets/audios/eyes_closed.wav")
+yawn_alarm = yawn.Yawn(time_threshold=YAWN_TIME_THRESHOLD, alarm_wav_file_path="assets/audios/yawn.wav")
 
 # Main loop
 start_time = time.time()

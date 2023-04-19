@@ -1,5 +1,7 @@
 # EyesClosed Class
 
+import simpleaudio as sa
+
 class EyesClosed:
     """
     Class to track the duration of eyes closed events and trigger an alarm if the duration exceeds a threshold.
@@ -82,6 +84,8 @@ class EyesClosed:
         """
         self.frames: int = 0
         self.time_threshold: int = time_threshold
+        self.alarm_wav_obj = sa.WaveObject.from_wave_file(alarm_wav_file_path)
+        self.alarm_audio_instance = None
 
     def add_frame(self, fps: float) -> None:
         """
@@ -129,4 +133,11 @@ class EyesClosed:
             None.
         """
         # play sleepy alaram sound
-        print("ALARM: EYES CLOSED ALARM")
+        if self.alarm_audio_instance:
+            if self.alarm_audio_instance.is_playing():
+                return
+            else:
+                self.alarm_audio_instance = self.alarm_wav_obj.play()
+        else:
+            self.alarm_audio_instance = self.alarm_wav_obj.play()
+            # self.alarm_audio_instance.wait_done()
