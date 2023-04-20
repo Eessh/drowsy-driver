@@ -25,7 +25,7 @@ Driver drowsiness detection using facial landmanrks, and modified aspect ratios,
     ```
 - Install required libraries
   ```bash
-  pip install requirements.txt
+  pip install -r requirements.txt
   ```
 - Run
   ```bash
