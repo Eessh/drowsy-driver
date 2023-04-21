@@ -175,7 +175,8 @@ while True:
 								background_color=colors.GREEN,
 								background_opacity=0.8
 							)
-			eyes_closed_alarm.reset()
+			eyes_closed_alarm.add_bounded_frame(ok = True, fps = fps)
+			# eyes_closed_alarm.reset()
 		else:
 			frame = drawing_utils.text_with_background(
 								frame,
@@ -185,7 +186,8 @@ while True:
 								background_color=colors.RED,
 								background_opacity=0.8
 							)
-			eyes_closed_alarm.add_frame(fps)
+			eyes_closed_alarm.add_bounded_frame(ok = False, fps = fps)
+			# eyes_closed_alarm.add_frame(fps)
 
 		# Deciding mouth yawning or normal
 		if mouth_aspect_ratio <= MOUTH_ASPECT_RATIO_THRESHOLD:
