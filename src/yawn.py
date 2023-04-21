@@ -2,6 +2,31 @@
 
 import simpleaudio as sa
 
+class Frames:
+    def __init__(self, percentage_threshold: int) -> None:
+        self.ok: int = 0
+        self.notok: int = 0
+        self.percentage_threshold = percentage_threshold
+
+    def add_ok(self) -> None:
+        self.ok += 1
+        if self.ok > self.notok:
+            self.reset()
+
+    def add_notok(self) -> None:
+        self.notok += 1
+
+    def reset(self) -> None:
+        self.ok = 0
+        self.notok = 0
+
+    def crossed_threshold(self) -> bool:
+        if self.ok + self.notok == 0:
+            return False
+        if (self.notok/(self.ok+self.notok))*100 > self.percentage_threshold:
+            return True
+        return False
+
 class Yawn:
     """
     Class to track the duration of yawn events and trigger an alarm if the duration exceeds a threshold.
@@ -64,6 +89,7 @@ class Yawn:
         self.time_threshold: int = time_threshold
         self.alarm_wav_obj = sa.WaveObject.from_wave_file(alarm_wav_file_path)
         self.alarm_audio_instance = None
+        self.bounded_frames: Frames = Frames(80)
 
     def add_frame(self, fps: float) -> None:
         """
@@ -80,6 +106,14 @@ class Yawn:
         """
         self.frames += 1
         if self.frames > self.time_threshold*fps:
+            self.trigger_alarm()
+
+    def add_bounded_frame(self, ok: bool, fps: float) -> None:
+        if ok:
+            self.bounded_frames.add_ok()
+        else:
+            self.bounded_frames.add_notok()
+        if self.bounded_frames.crossed_threshold() and self.bounded_frames.notok>self.time_threshold*fps:
             self.trigger_alarm()
 
     def reset(self) -> None:

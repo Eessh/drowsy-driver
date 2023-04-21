@@ -197,7 +197,8 @@ while True:
 								background_color=colors.GREEN,
 								background_opacity=0.8
 							)
-			yawn_alarm.reset()
+			yawn_alarm.add_bounded_frame(ok = True, fps = fps)
+			# yawn_alarm.reset()
 		else:
 			frame = drawing_utils.text_with_background(
 								frame,
@@ -207,7 +208,8 @@ while True:
 								background_color=colors.RED,
 								background_opacity=0.8
 							)
-			yawn_alarm.add_frame(fps)
+			yawn_alarm.add_bounded_frame(ok = False, fps = fps)
+			# yawn_alarm.add_frame(fps)
 
 	cv.imshow("Drowsy Driver", frame)
 
