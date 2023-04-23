@@ -1,5 +1,5 @@
 # Imports
-import time
+# import time
 import tomli
 import cv2 as cv
 import mediapipe as mp
@@ -10,6 +10,7 @@ import ratio_utils
 import drawing_utils
 import eyes_closed
 import yawn
+import fps
 
 # Detection utility functions
 def landmarks_detection(image, results, draw_detection_points=False, color=colors.GREEN):
@@ -70,7 +71,9 @@ camera = cv.VideoCapture(0)
 width = int(camera.get(cv.CAP_PROP_FRAME_WIDTH)) # 3
 height = int(camera.get(cv.CAP_PROP_FRAME_HEIGHT)) # 4
 print(f"Video Resolution: ({width}, {height})")
-frame_counter = 0
+# frame_counter = 0
+frames_per_second = fps.FPS()
+frames_per_second.start()
 
 # Loading config
 config_file = open("config.toml", mode="rb")
@@ -92,13 +95,14 @@ eyes_closed_alarm = eyes_closed.EyesClosed(time_threshold=EYES_CLOSED_TIME_THRES
 yawn_alarm = yawn.Yawn(time_threshold=YAWN_TIME_THRESHOLD, alarm_wav_file_path="assets/audios/yawn.wav")
 
 # Main loop
-start_time = time.time()
+# start_time = time.time()
 while True:
 	frame_read_successful, frame = camera.read()
 	if not frame_read_successful:
 		break
 
-	frame_counter += 1
+	# frame_counter += 1
+	frames_per_second.update()
 
 	rgb_frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
 	results = face_mesh.process(rgb_frame)
@@ -129,12 +133,14 @@ while True:
 		mouth_aspect_ratio = ratio_utils.mouth_aspect_ratio([mesh_coordinates[index] for index in mesh_indices.mouth])
 
 		# Calculating FPS
-		end_time = time.time() - start_time
-		fps = frame_counter / end_time
+		# end_time = time.time() - start_time
+		frames_per_second.stop()
+		# fps = frame_counter / end_time
+		frames_per_second_value = frames_per_second.fps()
 
 		# Drawing FPS
 		if config["draw_info"]["fps"]:
-			frame = drawing_utils.text(frame, f"FPS: {round(fps, 1)}", (width-80, 0))
+			frame = drawing_utils.text(frame, f"FPS: {round(frames_per_second_value, 1)}", (width-80, 0))
 
 		# Drawing ratios
 		if config["show_ratios"]["eye_aspect_ratio"]:
@@ -175,7 +181,7 @@ while True:
 								background_color=colors.GREEN,
 								background_opacity=0.8
 							)
-			eyes_closed_alarm.add_bounded_frame(ok = True, fps = fps)
+			eyes_closed_alarm.add_bounded_frame(ok = True, fps = frames_per_second_value)
 			# eyes_closed_alarm.reset()
 		else:
 			frame = drawing_utils.text_with_background(
@@ -186,7 +192,7 @@ while True:
 								background_color=colors.RED,
 								background_opacity=0.8
 							)
-			eyes_closed_alarm.add_bounded_frame(ok = False, fps = fps)
+			eyes_closed_alarm.add_bounded_frame(ok = False, fps = frames_per_second_value)
 			# eyes_closed_alarm.add_frame(fps)
 
 		# Deciding mouth yawning or normal
@@ -199,7 +205,7 @@ while True:
 								background_color=colors.GREEN,
 								background_opacity=0.8
 							)
-			yawn_alarm.add_bounded_frame(ok = True, fps = fps)
+			yawn_alarm.add_bounded_frame(ok = True, fps = frames_per_second_value)
 			# yawn_alarm.reset()
 		else:
 			frame = drawing_utils.text_with_background(
@@ -210,7 +216,7 @@ while True:
 								background_color=colors.RED,
 								background_opacity=0.8
 							)
-			yawn_alarm.add_bounded_frame(ok = False, fps = fps)
+			yawn_alarm.add_bounded_frame(ok = False, fps = frames_per_second_value)
 			# yawn_alarm.add_frame(fps)
 
 	cv.imshow("Drowsy Driver", frame)
