@@ -208,7 +208,6 @@ while True:
 	frames_per_second.update()
 
 	rgb_frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
-	results = face_mesh.process(rgb_frame)
 
 	frame_processing_thread = threading.Thread(target=process_frame, args=(rgb_frame, processed_frames, frames_per_second, eyes_closed_alarm, yawn_alarm))
 	frame_processing_thread.start()
