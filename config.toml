@@ -1,4 +1,5 @@
 ratio_to_use = "modified_eye_aspect_ratio"
+deamonize = false
 
 [draw_info]
 resolution = false
