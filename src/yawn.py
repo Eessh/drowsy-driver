@@ -93,6 +93,9 @@ class Yawn:
         if self.bounded_frames.crossed_threshold() and self.bounded_frames.notok>self.time_threshold*fps:
             self.trigger_alarm()
 
+    def update_time_threshold(self, time_threshold: int) -> None:
+        self.time_threshold = time_threshold
+
     def reset(self) -> None:
         """
         Resets the frame count back to zero.

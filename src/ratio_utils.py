@@ -2,7 +2,7 @@
 
 import math
 
-def euclidean_distance(point1, point2):
+def euclidean_distance(point1, point2) -> float:
 	"""
     Calculates the Euclidean distance between two points in 2D space.
 
@@ -33,6 +33,30 @@ def euclidean_distance(point1, point2):
         - The function returns the Euclidean distance as a float value.
     """
 	return math.sqrt((point1[0]-point2[0])**2 + (point1[1]-point2[1])**2)
+
+def eye_landmarks_horizontal_distance(eye_mesh_coordinates) -> float:
+    return euclidean_distance(eye_mesh_coordinates[0], eye_mesh_coordinates[1])
+
+def eye_landmarks_vertical_distance1(eye_mesh_coordinates) -> float:
+    return euclidean_distance(eye_mesh_coordinates[2], eye_mesh_coordinates[3])
+
+def eye_landmarks_vertical_distance2(eye_mesh_coordinates) -> float:
+    return euclidean_distance(eye_mesh_coordinates[4], eye_mesh_coordinates[5])
+
+def eye_landmarks_vertical_distance3(eye_mesh_coordinates) -> float:
+    return euclidean_distance(eye_mesh_coordinates[6], eye_mesh_coordinates[7])
+
+def eye_landmarks_vertical_distance4(eye_mesh_coordinates) -> float:
+    return euclidean_distance(eye_mesh_coordinates[8], eye_mesh_coordinates[9])
+
+def eye_landmarks_vertical_distance5(eye_mesh_coordinates) -> float:
+    return euclidean_distance(eye_mesh_coordinates[10], eye_mesh_coordinates[11])
+
+def eye_landmarks_vertical_distance6(eye_mesh_coordinates) -> float:
+    return euclidean_distance(eye_mesh_coordinates[12], eye_mesh_coordinates[13])
+
+def eye_landmarks_vertical_distance7(eye_mesh_coordinates) -> float:
+    return euclidean_distance(eye_mesh_coordinates[14], eye_mesh_coordinates[15])
 
 def eye_aspect_ratio(eye_mesh_coordinates):
 	"""
