@@ -2,8 +2,9 @@
 
 import math
 
+
 def euclidean_distance(point1, point2) -> float:
-	"""
+    """
     Calculates the Euclidean distance between two points in 2D space.
 
     Args:
@@ -32,34 +33,43 @@ def euclidean_distance(point1, point2) -> float:
           vertical coordinate.
         - The function returns the Euclidean distance as a float value.
     """
-	return math.sqrt((point1[0]-point2[0])**2 + (point1[1]-point2[1])**2)
+    return math.sqrt((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2)
+
 
 def eye_landmarks_horizontal_distance(eye_mesh_coordinates) -> float:
     return euclidean_distance(eye_mesh_coordinates[0], eye_mesh_coordinates[1])
 
+
 def eye_landmarks_vertical_distance1(eye_mesh_coordinates) -> float:
     return euclidean_distance(eye_mesh_coordinates[2], eye_mesh_coordinates[3])
+
 
 def eye_landmarks_vertical_distance2(eye_mesh_coordinates) -> float:
     return euclidean_distance(eye_mesh_coordinates[4], eye_mesh_coordinates[5])
 
+
 def eye_landmarks_vertical_distance3(eye_mesh_coordinates) -> float:
     return euclidean_distance(eye_mesh_coordinates[6], eye_mesh_coordinates[7])
+
 
 def eye_landmarks_vertical_distance4(eye_mesh_coordinates) -> float:
     return euclidean_distance(eye_mesh_coordinates[8], eye_mesh_coordinates[9])
 
+
 def eye_landmarks_vertical_distance5(eye_mesh_coordinates) -> float:
     return euclidean_distance(eye_mesh_coordinates[10], eye_mesh_coordinates[11])
+
 
 def eye_landmarks_vertical_distance6(eye_mesh_coordinates) -> float:
     return euclidean_distance(eye_mesh_coordinates[12], eye_mesh_coordinates[13])
 
+
 def eye_landmarks_vertical_distance7(eye_mesh_coordinates) -> float:
     return euclidean_distance(eye_mesh_coordinates[14], eye_mesh_coordinates[15])
 
+
 def eye_aspect_ratio(eye_mesh_coordinates):
-	"""
+    """
     Calculates the eye aspect ratio (EAR) for a given list of eye landmark coordinates.
 
     Args:
@@ -94,16 +104,19 @@ def eye_aspect_ratio(eye_mesh_coordinates):
           to the width of the eye, as defined by the distance between two specific landmark points on the eye.
         - The eye aspect ratio (EAR) is commonly used in eye tracking and drowsiness detection applications.
     """
-	eye_width = euclidean_distance(eye_mesh_coordinates[0], eye_mesh_coordinates[1])
-	eye_height_sum = 0
-	i = 2
-	while i < 16:
-		eye_height_sum += euclidean_distance(eye_mesh_coordinates[i], eye_mesh_coordinates[i+1])
-		i += 2
-	return (1.0*eye_height_sum)/(7.0*eye_width)
+    eye_width = euclidean_distance(eye_mesh_coordinates[0], eye_mesh_coordinates[1])
+    eye_height_sum = 0
+    i = 2
+    while i < 16:
+        eye_height_sum += euclidean_distance(
+            eye_mesh_coordinates[i], eye_mesh_coordinates[i + 1]
+        )
+        i += 2
+    return (1.0 * eye_height_sum) / (7.0 * eye_width)
+
 
 def mouth_aspect_ratio(mouth_mesh_coordinates):
-	"""
+    """
     Calculates the mouth aspect ratio for a given list of mouth landmark coordinates.
 
     Args:
@@ -135,16 +148,21 @@ def mouth_aspect_ratio(mouth_mesh_coordinates):
         - The mouth aspect ratio is used in facial expression recognition and speech analysis applications as a measure of
           mouth openness or lip movement.
     """
-	mouth_width = euclidean_distance(mouth_mesh_coordinates[0], mouth_mesh_coordinates[1])
-	mouth_heights_sum = 0
-	i = 2
-	while i < 20:
-		mouth_heights_sum += euclidean_distance(mouth_mesh_coordinates[i], mouth_mesh_coordinates[i+1])
-		i += 2
-	return (1.0*mouth_heights_sum)/(7.0*mouth_width)
+    mouth_width = euclidean_distance(
+        mouth_mesh_coordinates[0], mouth_mesh_coordinates[1]
+    )
+    mouth_heights_sum = 0
+    i = 2
+    while i < 20:
+        mouth_heights_sum += euclidean_distance(
+            mouth_mesh_coordinates[i], mouth_mesh_coordinates[i + 1]
+        )
+        i += 2
+    return (1.0 * mouth_heights_sum) / (7.0 * mouth_width)
+
 
 def magic_ratio(eye_mesh_coordinates):
-	"""
+    """
     Calculates the magic ratio for a given list of eye landmark coordinates.
 
     Args:
@@ -180,19 +198,28 @@ def magic_ratio(eye_mesh_coordinates):
           based on their deviation from a normal range of heights. Points with higher deviation are assigned higher weightages.
         - The magic ratio is used in eye tracking and drowsiness detection applications as a measure of eye openness.
     """
-	eye_width = euclidean_distance(eye_mesh_coordinates[0], eye_mesh_coordinates[1])
-	eye_height1 = euclidean_distance(eye_mesh_coordinates[2], eye_mesh_coordinates[3])
-	eye_height2 = euclidean_distance(eye_mesh_coordinates[4], eye_mesh_coordinates[5])
-	eye_height3 = euclidean_distance(eye_mesh_coordinates[6], eye_mesh_coordinates[7])
-	eye_height4 = euclidean_distance(eye_mesh_coordinates[8], eye_mesh_coordinates[9])
-	eye_height5 = euclidean_distance(eye_mesh_coordinates[10], eye_mesh_coordinates[11])
-	eye_height6 = euclidean_distance(eye_mesh_coordinates[12], eye_mesh_coordinates[13])
-	eye_height7 = euclidean_distance(eye_mesh_coordinates[14], eye_mesh_coordinates[15])
-	# heights: 4 will have maximum weightage
-	# heights: 3, 5 will have second maximum weightage
-	# heights: 2, 6 will have third maximum weightage
-	# heights: 1, 7 will have least weightage
-	# As we need to reflect even the smallest change, so
-	# we need to give more weightage to those heights which
-	# change more dramatically, giving higher deviation in output
-	return (4.0*eye_height4+3.0*(eye_height3+eye_height5)+2.0*(eye_height2+eye_height6)+(eye_height1+eye_height7))/16.0*eye_width
+    eye_width = euclidean_distance(eye_mesh_coordinates[0], eye_mesh_coordinates[1])
+    eye_height1 = euclidean_distance(eye_mesh_coordinates[2], eye_mesh_coordinates[3])
+    eye_height2 = euclidean_distance(eye_mesh_coordinates[4], eye_mesh_coordinates[5])
+    eye_height3 = euclidean_distance(eye_mesh_coordinates[6], eye_mesh_coordinates[7])
+    eye_height4 = euclidean_distance(eye_mesh_coordinates[8], eye_mesh_coordinates[9])
+    eye_height5 = euclidean_distance(eye_mesh_coordinates[10], eye_mesh_coordinates[11])
+    eye_height6 = euclidean_distance(eye_mesh_coordinates[12], eye_mesh_coordinates[13])
+    eye_height7 = euclidean_distance(eye_mesh_coordinates[14], eye_mesh_coordinates[15])
+    # heights: 4 will have maximum weightage
+    # heights: 3, 5 will have second maximum weightage
+    # heights: 2, 6 will have third maximum weightage
+    # heights: 1, 7 will have least weightage
+    # As we need to reflect even the smallest change, so
+    # we need to give more weightage to those heights which
+    # change more dramatically, giving higher deviation in output
+    return (
+        (
+            4.0 * eye_height4
+            + 3.0 * (eye_height3 + eye_height5)
+            + 2.0 * (eye_height2 + eye_height6)
+            + (eye_height1 + eye_height7)
+        )
+        / 16.0
+        * eye_width
+    )

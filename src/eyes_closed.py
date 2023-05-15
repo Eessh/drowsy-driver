@@ -4,6 +4,7 @@ import simpleaudio as sa
 
 from frames import Frames
 
+
 class EyesClosed:
     """
     Class to track the duration of eyes closed events and trigger an alarm if the duration exceeds a threshold.
@@ -104,7 +105,7 @@ class EyesClosed:
             None.
         """
         self.frames += 1
-        if self.frames > self.time_threshold*fps:
+        if self.frames > self.time_threshold * fps:
             self.trigger_alarm()
 
     def add_bounded_frame(self, ok: bool, fps: float) -> None:
@@ -112,7 +113,10 @@ class EyesClosed:
             self.bounded_frames.add_ok()
         else:
             self.bounded_frames.add_notok()
-        if self.bounded_frames.crossed_threshold() and self.bounded_frames.notok>self.time_threshold*fps:
+        if (
+            self.bounded_frames.crossed_threshold()
+            and self.bounded_frames.notok > self.time_threshold * fps
+        ):
             self.trigger_alarm()
 
     def update_time_threshold(self, time_threshold: int) -> None:

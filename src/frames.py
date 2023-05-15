@@ -1,5 +1,6 @@
 # Frames Class
 
+
 class Frames:
     def __init__(self, percentage_threshold: int) -> None:
         self.ok: int = 0
@@ -21,6 +22,6 @@ class Frames:
     def crossed_threshold(self) -> bool:
         if self.ok + self.notok == 0:
             return False
-        if (self.notok/(self.ok+self.notok))*100 > self.percentage_threshold:
+        if (self.notok / (self.ok + self.notok)) * 100 > self.percentage_threshold:
             return True
         return False
