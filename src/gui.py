@@ -2,15 +2,42 @@ import tkinter as tk
 from tkinter import ttk
 import sv_ttk
 import tomli
+import cv2 as cv
+import mediapipe as mp
+import threading
 
+import colors
+import mesh_indices
+import ratio_utils
+import drawing_utils
+import eyes_closed
+import yawn
+import fps
+
+
+"""
+    Loading Config
+"""
 config_file = open("config.toml", mode="rb")
 config = tomli.load(config_file)
 
+
+
+
+"""
+    Creating app window
+"""
 app_window = tk.Tk()
 app_window.title("Drowsy Driver - Options, Configurations & Calibrations")
-app_window.geometry("640x700")
+app_window.geometry("660x700")
 app_window.resizable(False, False)
 
+
+
+
+"""
+    Initializing Tkinter variables
+"""
 # Ratio to use Tkinter variable
 tk_var_ratio_to_use = tk.StringVar(master=app_window, value=config["ratio_to_use"])
 
@@ -65,6 +92,168 @@ tk_var_eyes_closed = tk.IntVar(
 )
 tk_var_yawn = tk.IntVar(master=app_window, value=config["time_thresholds"]["yawn"])
 
+
+
+
+
+"""
+    Real Shit
+"""
+def landmarks_detection(image, results, draw_detection_points=False, color=colors.GREEN):
+    image_height, image_width = image.shape[:2]
+    if results.multi_face_landmarks:
+        mesh_coordinates = [(int(point.x*image_width), int(point.y*image_height)) for point in results.multi_face_landmarks[0].landmark]
+    else:
+        return None
+    if draw_detection_points:
+        for point in mesh_coordinates:
+            cv.circle(image, point, 2, color)
+    return mesh_coordinates
+
+quit_real_shit: bool = False
+def real_shit():
+    face_mesh = mp.solutions.face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidence=0.5)
+    camera = cv.VideoCapture(0)
+    width = int(camera.get(cv.CAP_PROP_FRAME_WIDTH)) # 3
+    height = int(camera.get(cv.CAP_PROP_FRAME_HEIGHT)) # 4
+    print(f"Video Resolution: ({width}, {height})")
+    frames_per_second = fps.FPS()
+    frames_per_second.start()
+    eyes_closed_alarm = eyes_closed.EyesClosed(time_threshold=tk_var_eyes_closed.get(), alarm_wav_file_path="assets/audios/eyes_closed.wav")
+    yawn_alarm = yawn.Yawn(time_threshold=tk_var_yawn.get(), alarm_wav_file_path="assets/audios/yawn.wav")
+    while not quit_real_shit:
+        frame_read_successful, frame = camera.read()
+        if not frame_read_successful:
+            break
+        frames_per_second.update()
+        rgb_frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
+        results = face_mesh.process(rgb_frame)
+        if results.multi_face_landmarks:
+            mesh_coordinates = landmarks_detection(frame, results, draw_detection_points=False)
+            if tk_var_draw_face_landmarks.get():
+                for point in mesh_coordinates:
+                    cv.circle(frame, point, 1, colors.CYAN, -1, cv.LINE_AA)
+            if tk_var_draw_eye_landmarks.get():
+                for index in mesh_indices.left_eye:
+                    cv.circle(frame, mesh_coordinates[index], 1, colors.GREEN, -1, cv.LINE_AA)
+                for index in mesh_indices.right_eye:
+                    cv.circle(frame, mesh_coordinates[index], 1, colors.GREEN, -1, cv.LINE_AA)
+            if tk_var_draw_mouth_landmarks.get():
+                for index in mesh_indices.mouth:
+                    cv.circle(frame, mesh_coordinates[index], 1, colors.MAGNETA, -1, cv.LINE_AA)
+            # Calculating eye aspect ratios
+            left_eye_aspect_ratio = ratio_utils.eye_aspect_ratio([mesh_coordinates[index] for index in mesh_indices.left_eye])
+            right_eye_aspect_ratio = ratio_utils.eye_aspect_ratio([mesh_coordinates[index] for index in mesh_indices.right_eye])
+            # Calculating magic ratios
+            left_eye_magic_ratio = ratio_utils.magic_ratio([mesh_coordinates[index] for index in mesh_indices.left_eye])
+            right_eye_magic_ratio = ratio_utils.magic_ratio([mesh_coordinates[index] for index in mesh_indices.right_eye])
+            # Calculating mouth aspect ratio
+            mouth_aspect_ratio = ratio_utils.mouth_aspect_ratio([mesh_coordinates[index] for index in mesh_indices.mouth])
+            # Calculating FPS
+            frames_per_second.stop()
+            frames_per_second_value = frames_per_second.fps()
+            # Drawing FPS
+            if tk_var_draw_fps.get():
+                frame = drawing_utils.text(frame, f"FPS: {round(frames_per_second_value, 1)}", (width-80, 0))
+            # Drawing ratios
+            if tk_var_draw_eye_aspect_ratio.get():
+                frame = drawing_utils.text_with_background(
+                                    frame,
+                                    f"(Left, Right) Eye Aspect Ratios: ({round(left_eye_aspect_ratio,3)}, {round(right_eye_aspect_ratio,3)})",
+                                    (0, 0),
+                                    text_color=colors.GREEN,
+                                    background_color=colors.BLACK,
+                                    background_opacity=0.8
+                                )
+            if tk_var_draw_magic_ratio.get():
+                frame = drawing_utils.text_with_background(
+                                    frame,
+                                    f"(Left, Right) Magic Ratios: ({round(left_eye_magic_ratio,3)}, {round(right_eye_magic_ratio,3)})",
+                                    (0, 23),
+                                    text_color=colors.GREEN,
+                                    background_color=colors.BLACK,
+                                    background_opacity=0.8
+                                )
+            if tk_var_mouth_aspect_ratio.get():
+                frame = drawing_utils.text_with_background(
+                                    frame,
+                                    f"Mouth Aspect Ratio: {round(mouth_aspect_ratio, 3)}",
+                                    (0, 46),
+                                    text_color=colors.GREEN,
+                                    background_color=colors.BLACK,
+                                    background_opacity=0.8
+                                )
+            # Deciding eyes open or closed
+            if left_eye_aspect_ratio>=tk_var_eye_aspect_ratio.get() and right_eye_aspect_ratio>=tk_var_eye_aspect_ratio.get():
+                frame = drawing_utils.text_with_background(
+                                    frame,
+                                    "Eyes: OPEN",
+                                    (0, 69),
+                                    text_color=colors.BLACK,
+                                    background_color=colors.GREEN,
+                                    background_opacity=0.8
+                                )
+                eyes_closed_alarm.add_bounded_frame(ok = True, fps = frames_per_second_value)
+                # eyes_closed_alarm.reset()
+            else:
+                frame = drawing_utils.text_with_background(
+                                    frame,
+                                    "Eyes: CLOSE",
+                                    (0, 69),
+                                    text_color=colors.WHITE,
+                                    background_color=colors.RED,
+                                    background_opacity=0.8
+                                )
+                eyes_closed_alarm.add_bounded_frame(ok = False, fps = frames_per_second_value)
+                # eyes_closed_alarm.add_frame(fps)
+
+            # Deciding mouth yawning or normal
+            if mouth_aspect_ratio <= tk_var_mouth_aspect_ratio.get():
+                frame = drawing_utils.text_with_background(
+                                    frame,
+                                    "Mouth: NORMAL",
+                                    (0, 92),
+                                    text_color=colors.BLACK,
+                                    background_color=colors.GREEN,
+                                    background_opacity=0.8
+                                )
+                yawn_alarm.add_bounded_frame(ok = True, fps = frames_per_second_value)
+                # yawn_alarm.reset()
+            else:
+                frame = drawing_utils.text_with_background(
+                                    frame,
+                                    "Mouth: YAWNING",
+                                    (0, 92),
+                                    text_color=colors.WHITE,
+                                    background_color=colors.RED,
+                                    background_opacity=0.8
+                                )
+                yawn_alarm.add_bounded_frame(ok = False, fps = frames_per_second_value)
+                # yawn_alarm.add_frame(fps)
+
+        cv.imshow("Drowsy Driver", frame)
+
+        key_pressed = cv.waitKey(1)
+        if key_pressed == ord('q'):
+            break
+        if key_pressed == ord(' '):
+            eyes_closed_alarm.stop_alarm()
+            yawn_alarm.stop_alarm()
+
+    # Cleaning up resources used
+    cv.destroyAllWindows()
+    camera.release()
+
+worker_thread = threading.Thread(target=real_shit, args=(), daemon=True)
+worker_thread.start()
+
+
+
+
+
+"""
+    Initializing UI Widgets
+"""
 # Info, Landmarks, Ratios holder frame
 info_landmarks_ratios_wrapper_frame = ttk.Frame(master=app_window, padding=10)
 info_landmarks_ratios_wrapper_frame.pack(side="top", anchor="w")
@@ -277,4 +466,9 @@ times_frame.pack(side="top", anchor="w", padx=10, pady=10)
 # Sun Valley Theme
 sv_ttk.set_theme("dark")
 
+def handle_window_close_event():
+    quit_real_shit = True
+    app_window.destroy()
+
+app_window.protocol("WM_DELETE_WINDOW", handle_window_close_event)
 app_window.mainloop()
