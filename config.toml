@@ -2,7 +2,7 @@ ratio_to_use = "modified_eye_aspect_ratio"
 deamonize = false
 
 [draw_info]
-resolution = false
+resolution = true
 fps = true
 
 [draw_landmarks]
@@ -14,7 +14,8 @@ mouth = true
 eye_aspect_ratio = 0.15
 magic_ratio = 200
 mouth_aspect_ratio = 0.4
-modified_eye_aspect_ratio = 0.18
+modified_eye_aspect_ratio_left = 0.18
+modified_eye_aspect_ratio_right = 0.18
 
 [time_thresholds]
 eyes_closed = 3

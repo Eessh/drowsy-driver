@@ -28,14 +28,19 @@ config = tomli.load(config_file)
 """
 app_window = tk.Tk()
 app_window.title("Drowsy Driver - Options, Configurations & Calibrations")
-app_window.geometry("660x745")
+app_window.geometry("720x800")
 app_window.resizable(False, False)
 
 
 """
     Modified Eye Aspect Ratio Calibrator
 """
-calibrator = modified_eye_aspect_ratio_calibrator.ModifiedEyeAspectRatioCalibrator()
+calibrator_left = (
+    modified_eye_aspect_ratio_calibrator.ModifiedEyeAspectRatioCalibrator()
+)
+calibrator_right = (
+    modified_eye_aspect_ratio_calibrator.ModifiedEyeAspectRatioCalibrator()
+)
 
 
 """
@@ -76,8 +81,13 @@ tk_var_magic_ratio = tk.DoubleVar(
 tk_var_mouth_aspect_ratio = tk.DoubleVar(
     master=app_window, value=config["ratio_thresholds"]["mouth_aspect_ratio"]
 )
-tk_var_modified_eye_aspect_ratio = tk.DoubleVar(
-    master=app_window, value=config["ratio_thresholds"]["modified_eye_aspect_ratio"]
+tk_var_modified_eye_aspect_ratio_left = tk.DoubleVar(
+    master=app_window,
+    value=config["ratio_thresholds"]["modified_eye_aspect_ratio_left"],
+)
+tk_var_modified_eye_aspect_ratio_right = tk.DoubleVar(
+    master=app_window,
+    value=config["ratio_thresholds"]["modified_eye_aspect_ratio_right"],
 )
 
 # Draw ratio thresholds Tkinter variables
@@ -166,14 +176,14 @@ show_ratios_frame_mouth_aspect_ratio_checkbutton = ttk.Checkbutton(
     text="Show mouth aspect ratios",
     variable=tk_var_draw_mouth_aspect_ratio,
 )
-show_ratios_frame_modified_eye_aspect_ratio_checkbutton = ttk.Checkbutton(
-    master=show_ratios_frame,
-    text="Show modified aspect ratios",
-    variable=tk_var_draw_modified_eye_aspect_ratio,
-)
+# show_ratios_frame_modified_eye_aspect_ratio_checkbutton = ttk.Checkbutton(
+#     master=show_ratios_frame,
+#     text="Show modified eye aspect ratios",
+#     variable=tk_var_draw_modified_eye_aspect_ratio,
+# )
 show_ratios_frame_eye_aspect_ratio_checkbutton.pack(side="top", anchor="w")
 show_ratios_frame_mouth_aspect_ratio_checkbutton.pack(side="top", anchor="w")
-show_ratios_frame_modified_eye_aspect_ratio_checkbutton.pack(side="top", anchor="w")
+# show_ratios_frame_modified_eye_aspect_ratio_checkbutton.pack(side="top", anchor="w")
 show_ratios_frame.pack(side="left", anchor="nw")
 
 # Ratio Thresholds Frame
@@ -212,38 +222,66 @@ ratios_frame_mouth_aspect_frame_ratio_scale = ttk.Scale(
 ratios_frame_mouth_aspect_frame_ratio_label = ttk.Label(
     master=ratios_frame_mouth_aspect_frame, textvariable=tk_var_mouth_aspect_ratio
 )
-ratios_frame_modified_aspect_frame = ttk.LabelFrame(
+ratios_frame_modified_eye_aspect_frame = ttk.LabelFrame(
     master=ratios_frame,
     labelwidget=ttk.Label(
         text="Modified Eye Aspect Ratio (Modified-EAR)", font="SansSerif 13"
     ),
     padding=10,
 )
-ratios_frame_modified_aspect_frame_ratio_scale = ttk.Scale(
-    master=ratios_frame_modified_aspect_frame,
+ratios_frame_modified_eye_aspect_left_right_wrapper_frame = ttk.Frame(
+    master=ratios_frame_modified_eye_aspect_frame
+)
+ratios_frame_modified_eye_aspect_frame_left = ttk.Labelframe(
+    master=ratios_frame_modified_eye_aspect_left_right_wrapper_frame,
+    labelwidget=ttk.Label(text="Left Eye"),
+    padding=10,
+)
+ratios_frame_modified_eye_aspect_frame_right = ttk.Labelframe(
+    master=ratios_frame_modified_eye_aspect_left_right_wrapper_frame,
+    labelwidget=ttk.Label(text="Right Eye"),
+    padding=10,
+)
+ratios_frame_modified_aspect_frame_left_ratio_scale = ttk.Scale(
+    master=ratios_frame_modified_eye_aspect_frame_left,
     from_=0.0,
     to=1.0,
-    variable=tk_var_modified_eye_aspect_ratio,
-    length=400,
+    variable=tk_var_modified_eye_aspect_ratio_left,
+    length=300,
 )
-ratios_frame_modified_aspect_frame_ratio_label = ttk.Label(
-    master=ratios_frame_modified_aspect_frame,
-    textvariable=tk_var_modified_eye_aspect_ratio,
+ratios_frame_modified_aspect_frame_left_ratio_label = ttk.Label(
+    master=ratios_frame_modified_eye_aspect_frame_left,
+    textvariable=tk_var_modified_eye_aspect_ratio_left,
+)
+ratios_frame_modified_aspect_frame_right_ratio_scale = ttk.Scale(
+    master=ratios_frame_modified_eye_aspect_frame_right,
+    from_=0.0,
+    to=1.0,
+    variable=tk_var_modified_eye_aspect_ratio_right,
+    length=300,
+)
+ratios_frame_modified_aspect_frame_right_ratio_label = ttk.Label(
+    master=ratios_frame_modified_eye_aspect_frame_right,
+    textvariable=tk_var_modified_eye_aspect_ratio_right,
+)
+ratios_frame_modified_eye_aspect_button_checkbutton_wrapper_frame = ttk.Frame(
+    master=ratios_frame_modified_eye_aspect_frame
 )
 
 
 def handle_calibrate_button_click():
-    calibrator.start_calibration()
+    calibrator_left.start_calibration()
+    calibrator_right.start_calibration()
     ratios_frame_modified_aspect_frame_ratio_calibrate_button.state(["disabled"])
 
 
 ratios_frame_modified_aspect_frame_ratio_calibrate_button = ttk.Button(
-    master=ratios_frame_modified_aspect_frame,
-    text="⚙️  Calibrate",
+    master=ratios_frame_modified_eye_aspect_button_checkbutton_wrapper_frame,
+    text="⚙️ Calibrate",
     command=handle_calibrate_button_click,
 )
-ratios_frame_modified_aspect_frame_ratio_toggle = ttk.Checkbutton(
-    master=ratios_frame_modified_aspect_frame,
+ratios_frame_modified_aspect_frame_ratio_checkbutton = ttk.Checkbutton(
+    master=ratios_frame_modified_eye_aspect_button_checkbutton_wrapper_frame,
     text="Use Modified-EAR",
     variable=tk_var_ratio_to_use,
     onvalue="modified_eye_aspect_ratio",
@@ -255,11 +293,19 @@ ratios_frame_eye_aspect_frame.pack(side="top", anchor="w")
 ratios_frame_mouth_aspect_frame_ratio_scale.pack()
 ratios_frame_mouth_aspect_frame_ratio_label.pack()
 ratios_frame_mouth_aspect_frame.pack(side="top", anchor="w", pady=5)
-ratios_frame_modified_aspect_frame_ratio_scale.pack()
-ratios_frame_modified_aspect_frame_ratio_label.pack()
+ratios_frame_modified_aspect_frame_left_ratio_scale.pack()
+ratios_frame_modified_aspect_frame_left_ratio_label.pack()
+ratios_frame_modified_aspect_frame_right_ratio_scale.pack()
+ratios_frame_modified_aspect_frame_right_ratio_label.pack()
+ratios_frame_modified_eye_aspect_frame_left.pack(side="left")
+ratios_frame_modified_eye_aspect_frame_right.pack(side="left", padx=10)
+ratios_frame_modified_eye_aspect_left_right_wrapper_frame.pack(side="top")
 ratios_frame_modified_aspect_frame_ratio_calibrate_button.pack(side="left")
-ratios_frame_modified_aspect_frame_ratio_toggle.pack(side="left", padx=10)
-ratios_frame_modified_aspect_frame.pack(side="top", anchor="w")
+ratios_frame_modified_aspect_frame_ratio_checkbutton.pack(side="left", padx=10)
+ratios_frame_modified_eye_aspect_button_checkbutton_wrapper_frame.pack(
+    side="top", anchor="w", pady=(10, 0)
+)
+ratios_frame_modified_eye_aspect_frame.pack(side="top", anchor="w")
 ratios_frame.pack(side="top", anchor="w", padx=10)
 
 # Time Thresholds Frame
@@ -335,7 +381,7 @@ times_frame.pack(side="top", anchor="w", padx=10, pady=10)
 deamonize_checkbutton = ttk.Checkbutton(
     master=app_window, text="👻 Deamonize", variable=tk_var_deamonize_processing_thread
 )
-save_button = ttk.Button(master=app_window, text="📝 Save")
+save_button = ttk.Button(master=app_window, text="📝 Save Configuration")
 save_button.pack(side="right", anchor="e", padx=10, pady=10)
 deamonize_checkbutton.pack(side="right", anchor="e", padx=10, pady=10)
 
@@ -375,16 +421,34 @@ yawn_alarm = yawn.Yawn(
 )
 
 
-def update_calibrated_modified_eye_aspect_ratio(calibrated_m_ear):
-    tk_var_modified_eye_aspect_ratio.set(float("{:.2f}".format(calibrated_m_ear)))
+def update_calibrated_modified_eye_aspect_ratio_left(calibrated_m_ear):
+    tk_var_modified_eye_aspect_ratio_left.set(float("{:.2f}".format(calibrated_m_ear)))
     ratios_frame_modified_aspect_frame_ratio_calibrate_button.state(["!disabled"])
     print(
-        "[DEBUG] Calibrated: Modified Eye Aspect Ratio: {:.2f}".format(calibrated_m_ear)
+        "[DEBUG] Calibrated: Modified Eye Aspect Ratio (Left Eye): {:.2f}".format(
+            calibrated_m_ear
+        )
     )
 
 
-def live_update_calibration(calibration_value):
-    tk_var_modified_eye_aspect_ratio.set(float("{:.8f}".format(calibration_value)))
+def live_update_calibration_left(calibration_value):
+    tk_var_modified_eye_aspect_ratio_left.set(float("{:.8f}".format(calibration_value)))
+
+
+def update_calibrated_modified_eye_aspect_ratio_right(calibrated_m_ear):
+    tk_var_modified_eye_aspect_ratio_right.set(float("{:.2f}".format(calibrated_m_ear)))
+    ratios_frame_modified_aspect_frame_ratio_calibrate_button.state(["!disabled"])
+    print(
+        "[DEBUG] Calibrated: Modified Eye Aspect Ratio (Right Eye): {:.2f}".format(
+            calibrated_m_ear
+        )
+    )
+
+
+def live_update_calibration_right(calibration_value):
+    tk_var_modified_eye_aspect_ratio_right.set(
+        float("{:.8f}".format(calibration_value))
+    )
 
 
 def process():
@@ -430,12 +494,20 @@ def process():
                         -1,
                         cv.LINE_AA,
                     )
-            calibrator.update(
+            calibrator_left.update(
                 eye_mesh_coordinates=[
                     mesh_coordinates[index] for index in mesh_indices.left_eye
                 ],
-                callback=update_calibrated_modified_eye_aspect_ratio,
-                live_update_callback=live_update_calibration,
+                callback=update_calibrated_modified_eye_aspect_ratio_left,
+                live_update_callback=live_update_calibration_left,
+                show_update_logs=True,
+            )
+            calibrator_right.update(
+                eye_mesh_coordinates=[
+                    mesh_coordinates[index] for index in mesh_indices.right_eye
+                ],
+                callback=update_calibrated_modified_eye_aspect_ratio_right,
+                live_update_callback=live_update_calibration_right,
                 show_update_logs=True,
             )
             # Calculating eye aspect ratios
@@ -459,10 +531,15 @@ def process():
             # Calculating FPS
             frames_per_second.stop()
             frames_per_second_value = frames_per_second.fps()
+            # Drawing Video Resolutiom
+            if tk_var_draw_resolution.get():
+                frame = drawing_utils.text(
+                    frame, f"Resolution: {width} x {height}", (width - 180, 0)
+                )
             # Drawing FPS
             if tk_var_draw_fps.get():
                 frame = drawing_utils.text(
-                    frame, f"FPS: {round(frames_per_second_value, 1)}", (width - 80, 0)
+                    frame, f"FPS: {round(frames_per_second_value, 2)}", (width - 90, 23)
                 )
             # Drawing ratios
             if tk_var_draw_eye_aspect_ratio.get():
@@ -474,60 +551,90 @@ def process():
                     background_color=colors.BLACK,
                     background_opacity=0.8,
                 )
-            if tk_var_draw_magic_ratio.get():
+            # if tk_var_draw_magic_ratio.get():
+            #     frame = drawing_utils.text_with_background(
+            #         frame,
+            #         f"(Left, Right) Magic Ratios: ({round(left_eye_magic_ratio,3)}, {round(right_eye_magic_ratio,3)})",
+            #         (0, 23),
+            #         text_color=colors.GREEN,
+            #         background_color=colors.BLACK,
+            #         background_opacity=0.8,
+            #     )
+            if tk_var_mouth_aspect_ratio.get():
                 frame = drawing_utils.text_with_background(
                     frame,
-                    f"(Left, Right) Magic Ratios: ({round(left_eye_magic_ratio,3)}, {round(right_eye_magic_ratio,3)})",
+                    f"Mouth Aspect Ratio: {round(mouth_aspect_ratio, 3)}",
                     (0, 23),
                     text_color=colors.GREEN,
                     background_color=colors.BLACK,
                     background_opacity=0.8,
                 )
-            if tk_var_mouth_aspect_ratio.get():
-                frame = drawing_utils.text_with_background(
-                    frame,
-                    f"Mouth Aspect Ratio: {round(mouth_aspect_ratio, 3)}",
-                    (0, 46),
-                    text_color=colors.GREEN,
-                    background_color=colors.BLACK,
-                    background_opacity=0.8,
-                )
             # Deciding eyes open or closed
-            if (
-                left_eye_aspect_ratio >= tk_var_eye_aspect_ratio.get()
-                and right_eye_aspect_ratio >= tk_var_eye_aspect_ratio.get()
-            ):
-                frame = drawing_utils.text_with_background(
-                    frame,
-                    "Eyes: OPEN",
-                    (0, 69),
-                    text_color=colors.BLACK,
-                    background_color=colors.GREEN,
-                    background_opacity=0.8,
-                )
-                eyes_closed_alarm.add_bounded_frame(
-                    ok=True, fps=frames_per_second_value
-                )
-                # eyes_closed_alarm.reset()
+            if tk_var_ratio_to_use.get() == "modified_eye_aspect_ratio":
+                if (
+                    left_eye_aspect_ratio >= tk_var_modified_eye_aspect_ratio_left.get()
+                    and right_eye_aspect_ratio
+                    >= tk_var_modified_eye_aspect_ratio_right.get()
+                ):
+                    frame = drawing_utils.text_with_background(
+                        frame,
+                        "Eyes: OPEN",
+                        (0, 46),
+                        text_color=colors.BLACK,
+                        background_color=colors.GREEN,
+                        background_opacity=0.8,
+                    )
+                    eyes_closed_alarm.add_bounded_frame(
+                        ok=True, fps=frames_per_second_value
+                    )
+                else:
+                    frame = drawing_utils.text_with_background(
+                        frame,
+                        "Eyes: CLOSE",
+                        (0, 46),
+                        text_color=colors.WHITE,
+                        background_color=colors.RED,
+                        background_opacity=0.8,
+                    )
+                    eyes_closed_alarm.add_bounded_frame(
+                        ok=False, fps=frames_per_second_value
+                    )
             else:
-                frame = drawing_utils.text_with_background(
-                    frame,
-                    "Eyes: CLOSE",
-                    (0, 69),
-                    text_color=colors.WHITE,
-                    background_color=colors.RED,
-                    background_opacity=0.8,
-                )
-                eyes_closed_alarm.add_bounded_frame(
-                    ok=False, fps=frames_per_second_value
-                )
-                # eyes_closed_alarm.add_frame(fps)
+                if (
+                    left_eye_aspect_ratio >= tk_var_eye_aspect_ratio.get()
+                    and right_eye_aspect_ratio >= tk_var_eye_aspect_ratio.get()
+                ):
+                    frame = drawing_utils.text_with_background(
+                        frame,
+                        "Eyes: OPEN",
+                        (0, 46),
+                        text_color=colors.BLACK,
+                        background_color=colors.GREEN,
+                        background_opacity=0.8,
+                    )
+                    eyes_closed_alarm.add_bounded_frame(
+                        ok=True, fps=frames_per_second_value
+                    )
+                    # eyes_closed_alarm.reset()
+                else:
+                    frame = drawing_utils.text_with_background(
+                        frame,
+                        "Eyes: CLOSE",
+                        (0, 46),
+                        text_color=colors.WHITE,
+                        background_color=colors.RED,
+                        background_opacity=0.8,
+                    )
+                    eyes_closed_alarm.add_bounded_frame(
+                        ok=False, fps=frames_per_second_value
+                    )
+                    # eyes_closed_alarm.add_frame(fps)
             # Deciding mouth yawning or normal
             if mouth_aspect_ratio <= tk_var_mouth_aspect_ratio.get():
                 frame = drawing_utils.text_with_background(
                     frame,
                     "Mouth: NORMAL",
-                    (0, 92),
+                    (0, 69),
                     text_color=colors.BLACK,
                     background_color=colors.GREEN,
                     background_opacity=0.8,
@@ -538,7 +645,7 @@ def process():
                 frame = drawing_utils.text_with_background(
                     frame,
                     "Mouth: YAWNING",
-                    (0, 92),
+                    (0, 69),
                     text_color=colors.WHITE,
                     background_color=colors.RED,
                     background_opacity=0.8,
@@ -564,5 +671,5 @@ def handle_window_close_event():
     app_window.destroy()
 
 
-app_window.protocol("WM_DELETE_WINDOW", handle_window_close_event)
+app_window.protocol(name="WM_DELETE_WINDOW", func=handle_window_close_event)
 app_window.mainloop()
