@@ -14,6 +14,7 @@ import eyes_closed
 import yawn
 import fps
 import modified_eye_aspect_ratio_calibrator
+import configuration_writer
 
 
 """
@@ -75,9 +76,9 @@ tk_var_draw_mouth_landmarks = tk.BooleanVar(
 tk_var_eye_aspect_ratio = tk.DoubleVar(
     master=app_window, value=config["ratio_thresholds"]["eye_aspect_ratio"]
 )
-tk_var_magic_ratio = tk.DoubleVar(
-    master=app_window, value=config["ratio_thresholds"]["magic_ratio"]
-)
+# tk_var_magic_ratio = tk.DoubleVar(
+#     master=app_window, value=config["ratio_thresholds"]["magic_ratio"]
+# )
 tk_var_mouth_aspect_ratio = tk.DoubleVar(
     master=app_window, value=config["ratio_thresholds"]["mouth_aspect_ratio"]
 )
@@ -94,9 +95,9 @@ tk_var_modified_eye_aspect_ratio_right = tk.DoubleVar(
 tk_var_draw_eye_aspect_ratio = tk.BooleanVar(
     master=app_window, value=config["show_ratios"]["eye_aspect_ratio"]
 )
-tk_var_draw_magic_ratio = tk.BooleanVar(
-    master=app_window, value=config["show_ratios"]["magic_ratio"]
-)
+# tk_var_draw_magic_ratio = tk.BooleanVar(
+#     master=app_window, value=config["show_ratios"]["magic_ratio"]
+# )
 tk_var_draw_mouth_aspect_ratio = tk.BooleanVar(
     master=app_window, value=config["show_ratios"]["mouth_aspect_ratio"]
 )
@@ -381,7 +382,32 @@ times_frame.pack(side="top", anchor="w", padx=10, pady=10)
 deamonize_checkbutton = ttk.Checkbutton(
     master=app_window, text="👻 Deamonize", variable=tk_var_deamonize_processing_thread
 )
-save_button = ttk.Button(master=app_window, text="📝 Save Configuration")
+
+
+def handle_save_button_click():
+    config_writer = configuration_writer.ConfigurationWriter()
+    config_writer.write(
+        ratio_to_use=tk_var_ratio_to_use.get(),
+        deamonize=tk_var_deamonize_processing_thread.get(),
+        draw_info__resolution=tk_var_draw_resolution.get(),
+        draw_info__fps=tk_var_draw_fps.get(),
+        draw_landmarks__face=tk_var_draw_face_landmarks.get(),
+        draw_landmarks__eye=tk_var_draw_eye_landmarks.get(),
+        draw_landmarks__mouth=tk_var_draw_mouth_landmarks.get(),
+        ratio_thresholds__eye_aspect_ratio=tk_var_eye_aspect_ratio.get(),
+        ratio_thresholds__modified_eye_aspect_ratio_left=tk_var_modified_eye_aspect_ratio_left.get(),
+        ratio_thresholds__modified_eye_aspect_ratio_right=tk_var_modified_eye_aspect_ratio_right.get(),
+        ratio_thresholds__mouth_aspect_ratio=tk_var_mouth_aspect_ratio.get(),
+        time_thresholds__eyes_closed=tk_var_eyes_closed.get(),
+        time_thresholds__yawn=tk_var_yawn.get(),
+        show_ratios__eye_aspect_ratio=tk_var_draw_eye_aspect_ratio.get(),
+        show_ratios__mouth_aspect_ratio=tk_var_draw_mouth_aspect_ratio.get(),
+    )
+
+
+save_button = ttk.Button(
+    master=app_window, text="📝 Save Configuration", command=handle_save_button_click
+)
 save_button.pack(side="right", anchor="e", padx=10, pady=10)
 deamonize_checkbutton.pack(side="right", anchor="e", padx=10, pady=10)
 
@@ -518,12 +544,12 @@ def process():
                 [mesh_coordinates[index] for index in mesh_indices.right_eye]
             )
             # Calculating magic ratios
-            left_eye_magic_ratio = ratio_utils.magic_ratio(
-                [mesh_coordinates[index] for index in mesh_indices.left_eye]
-            )
-            right_eye_magic_ratio = ratio_utils.magic_ratio(
-                [mesh_coordinates[index] for index in mesh_indices.right_eye]
-            )
+            # left_eye_magic_ratio = ratio_utils.magic_ratio(
+            #     [mesh_coordinates[index] for index in mesh_indices.left_eye]
+            # )
+            # right_eye_magic_ratio = ratio_utils.magic_ratio(
+            #     [mesh_coordinates[index] for index in mesh_indices.right_eye]
+            # )
             # Calculating mouth aspect ratio
             mouth_aspect_ratio = ratio_utils.mouth_aspect_ratio(
                 [mesh_coordinates[index] for index in mesh_indices.mouth]
