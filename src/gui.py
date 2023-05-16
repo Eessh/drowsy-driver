@@ -573,7 +573,7 @@ def process():
             if tk_var_ratio_to_use.get() == "modified_eye_aspect_ratio":
                 if (
                     left_eye_aspect_ratio >= tk_var_modified_eye_aspect_ratio_left.get()
-                    and right_eye_aspect_ratio
+                    or right_eye_aspect_ratio
                     >= tk_var_modified_eye_aspect_ratio_right.get()
                 ):
                     frame = drawing_utils.text_with_background(
@@ -602,7 +602,7 @@ def process():
             else:
                 if (
                     left_eye_aspect_ratio >= tk_var_eye_aspect_ratio.get()
-                    and right_eye_aspect_ratio >= tk_var_eye_aspect_ratio.get()
+                    or right_eye_aspect_ratio >= tk_var_eye_aspect_ratio.get()
                 ):
                     frame = drawing_utils.text_with_background(
                         frame,
