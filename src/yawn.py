@@ -93,7 +93,7 @@ class Yawn:
             self.bounded_frames.add_notok()
         if (
             self.bounded_frames.crossed_threshold()
-            and self.bounded_frames.notok > self.time_threshold * fps
+            and self.bounded_frames.ok + self.bounded_frames.notok > self.time_threshold * fps
         ):
             self.trigger_alarm()
 

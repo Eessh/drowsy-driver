@@ -17,7 +17,7 @@ modified_eye_aspect_ratio_right = 0.18
 mouth_aspect_ratio = 0.4
 
 [time_thresholds]
-eyes_closed = 5
+eyes_closed = 3
 yawn = 4
 
 [show_ratios]

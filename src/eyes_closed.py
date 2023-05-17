@@ -105,8 +105,8 @@ class EyesClosed:
             None.
         """
         self.frames += 1
-        if self.frames > self.time_threshold * fps:
-            self.trigger_alarm()
+        # if self.frames > self.time_threshold * fps:
+        #     self.trigger_alarm()
 
     def add_bounded_frame(self, ok: bool, fps: float) -> None:
         if ok:
@@ -115,7 +115,7 @@ class EyesClosed:
             self.bounded_frames.add_notok()
         if (
             self.bounded_frames.crossed_threshold()
-            and self.bounded_frames.notok > self.time_threshold * fps
+            and self.bounded_frames.ok + self.bounded_frames.notok > self.time_threshold * fps
         ):
             self.trigger_alarm()
 

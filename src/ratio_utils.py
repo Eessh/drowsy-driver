@@ -112,6 +112,8 @@ def eye_aspect_ratio(eye_mesh_coordinates):
             eye_mesh_coordinates[i], eye_mesh_coordinates[i + 1]
         )
         i += 2
+    if eye_width == 0:
+        return 1.0
     return (1.0 * eye_height_sum) / (7.0 * eye_width)
 
 
@@ -158,6 +160,8 @@ def mouth_aspect_ratio(mouth_mesh_coordinates):
             mouth_mesh_coordinates[i], mouth_mesh_coordinates[i + 1]
         )
         i += 2
+    if mouth_width == 0:
+        return 1.0
     return (1.0 * mouth_heights_sum) / (7.0 * mouth_width)
 
 
@@ -213,6 +217,8 @@ def magic_ratio(eye_mesh_coordinates):
     # As we need to reflect even the smallest change, so
     # we need to give more weightage to those heights which
     # change more dramatically, giving higher deviation in output
+    if eye_width == 0:
+        return 1.0
     return (
         (
             4.0 * eye_height4

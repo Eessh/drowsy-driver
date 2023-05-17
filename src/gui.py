@@ -101,9 +101,9 @@ tk_var_draw_eye_aspect_ratio = tk.BooleanVar(
 tk_var_draw_mouth_aspect_ratio = tk.BooleanVar(
     master=app_window, value=config["show_ratios"]["mouth_aspect_ratio"]
 )
-tk_var_draw_modified_eye_aspect_ratio = tk.BooleanVar(
-    master=app_window, value=config["show_ratios"]["modified_eye_aspect_ratio"]
-)
+# tk_var_draw_modified_eye_aspect_ratio = tk.BooleanVar(
+#     master=app_window, value=config["show_ratios"]["modified_eye_aspect_ratio"]
+# )
 
 # Threshold time Tkinter variables
 tk_var_eyes_closed = tk.IntVar(
