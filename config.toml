@@ -1,4 +1,4 @@
-ratio_to_use = "eye_aspect_ratio"
+ratio_to_use = "modified_eye_aspect_ratio"
 deamonize = false
 
 [draw_info]
@@ -12,8 +12,8 @@ mouth = true
 
 [ratio_thresholds]
 eye_aspect_ratio = 0.15
-modified_eye_aspect_ratio_left = 0.18
-modified_eye_aspect_ratio_right = 0.18
+modified_eye_aspect_ratio_left = 0.16
+modified_eye_aspect_ratio_right = 0.16
 mouth_aspect_ratio = 0.4
 
 [time_thresholds]

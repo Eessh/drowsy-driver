@@ -67,17 +67,15 @@ def landmarks_detection(image, results, draw_detection_points=False, color=color
 # Face Mesh
 face_mesh = mp.solutions.face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidence=0.5)
 
-# Start capturing video
-# camera = cv.VideoCapture(0)
-# width = int(camera.get(cv.CAP_PROP_FRAME_WIDTH)) # 3
-# height = int(camera.get(cv.CAP_PROP_FRAME_HEIGHT)) # 4
+# Threaded Video Stream Capture
 stream = video_stream.VideoStream().start()
 if stream is None:
 	exit()
 width = stream.width()
 height = stream.height()
 print(f"Video Resolution: ({width}, {height})")
-# frame_counter = 0
+
+# FPS Counter
 frames_per_second = fps.FPS()
 frames_per_second.start()
 
@@ -85,12 +83,10 @@ frames_per_second.start()
 config_file = open("config.toml", mode="rb")
 config = tomli.load(config_file)
 print("Eye Aspect Ratio Threshold: " + str(config["ratio_thresholds"]["eye_aspect_ratio"]))
-print("Magic Ratio Threshold: " + str(config["ratio_thresholds"]["magic_ratio"]))
 print("Mouth Aspect Ratio Threshold: " + str(config["ratio_thresholds"]["mouth_aspect_ratio"]))
 
 # Ratio Thresholds
 EYE_ASPECT_RATIO_THRESHOLD = config["ratio_thresholds"]["eye_aspect_ratio"]
-MAGIC_RATIO_THRESHOLD = config["ratio_thresholds"]["magic_ratio"] # Magic Ratio threshold varies according to person's distance from the camera.
 MOUTH_ASPECT_RATIO_THRESHOLD = config["ratio_thresholds"]["mouth_aspect_ratio"]
 
 # Time Thresholds
@@ -101,14 +97,12 @@ eyes_closed_alarm = eyes_closed.EyesClosed(time_threshold=EYES_CLOSED_TIME_THRES
 yawn_alarm = yawn.Yawn(time_threshold=YAWN_TIME_THRESHOLD, alarm_wav_file_path="assets/audios/yawn.wav")
 
 # Main loop
-# start_time = time.time()
 while True:
 	# frame_read_successful, frame = camera.read()
 	frame_read_successful, frame = stream.read_frame()
 	if not frame_read_successful:
 		break
 
-	# frame_counter += 1
 	frames_per_second.update()
 
 	rgb_frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
@@ -132,17 +126,11 @@ while True:
 		left_eye_aspect_ratio = ratio_utils.eye_aspect_ratio([mesh_coordinates[index] for index in mesh_indices.left_eye])
 		right_eye_aspect_ratio = ratio_utils.eye_aspect_ratio([mesh_coordinates[index] for index in mesh_indices.right_eye])
 
-		# Calculating magic ratios
-		left_eye_magic_ratio = ratio_utils.magic_ratio([mesh_coordinates[index] for index in mesh_indices.left_eye])
-		right_eye_magic_ratio = ratio_utils.magic_ratio([mesh_coordinates[index] for index in mesh_indices.right_eye])
-
 		# Calculating mouth aspect ratio
 		mouth_aspect_ratio = ratio_utils.mouth_aspect_ratio([mesh_coordinates[index] for index in mesh_indices.mouth])
 
 		# Calculating FPS
-		# end_time = time.time() - start_time
 		frames_per_second.stop()
-		# fps = frame_counter / end_time
 		frames_per_second_value = frames_per_second.fps()
 
 		# Drawing FPS
@@ -159,20 +147,11 @@ while True:
 								background_color=colors.BLACK,
 								background_opacity=0.8
 							)
-		if config["show_ratios"]["magic_ratio"]:
-			frame = drawing_utils.text_with_background(
-								frame,
-								f"(Left, Right) Magic Ratios: ({round(left_eye_magic_ratio,3)}, {round(right_eye_magic_ratio,3)})",
-								(0, 23),
-								text_color=colors.GREEN,
-								background_color=colors.BLACK,
-								background_opacity=0.8
-							)
 		if config["show_ratios"]["mouth_aspect_ratio"]:
 			frame = drawing_utils.text_with_background(
 								frame,
 								f"Mouth Aspect Ratio: {round(mouth_aspect_ratio, 3)}",
-								(0, 46),
+								(0, 23),
 								text_color=colors.GREEN,
 								background_color=colors.BLACK,
 								background_opacity=0.8
@@ -183,48 +162,44 @@ while True:
 			frame = drawing_utils.text_with_background(
 								frame,
 								"Eyes: OPEN",
-								(0, 69),
+								(0, 46),
 								text_color=colors.BLACK,
 								background_color=colors.GREEN,
 								background_opacity=0.8
 							)
 			eyes_closed_alarm.add_bounded_frame(ok = True, fps = frames_per_second_value)
-			# eyes_closed_alarm.reset()
 		else:
 			frame = drawing_utils.text_with_background(
 								frame,
 								"Eyes: CLOSE",
-								(0, 69),
+								(0, 46),
 								text_color=colors.WHITE,
 								background_color=colors.RED,
 								background_opacity=0.8
 							)
 			eyes_closed_alarm.add_bounded_frame(ok = False, fps = frames_per_second_value)
-			# eyes_closed_alarm.add_frame(fps)
 
 		# Deciding mouth yawning or normal
 		if mouth_aspect_ratio <= MOUTH_ASPECT_RATIO_THRESHOLD:
 			frame = drawing_utils.text_with_background(
 								frame,
 								"Mouth: NORMAL",
-								(0, 92),
+								(0, 69),
 								text_color=colors.BLACK,
 								background_color=colors.GREEN,
 								background_opacity=0.8
 							)
 			yawn_alarm.add_bounded_frame(ok = True, fps = frames_per_second_value)
-			# yawn_alarm.reset()
 		else:
 			frame = drawing_utils.text_with_background(
 								frame,
 								"Mouth: YAWNING",
-								(0, 92),
+								(0, 69),
 								text_color=colors.WHITE,
 								background_color=colors.RED,
 								background_opacity=0.8
 							)
 			yawn_alarm.add_bounded_frame(ok = False, fps = frames_per_second_value)
-			# yawn_alarm.add_frame(fps)
 
 	cv.imshow("Drowsy Driver", frame)
 
