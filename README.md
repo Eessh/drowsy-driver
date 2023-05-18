@@ -2,6 +2,8 @@
 
 Driver drowsiness detection using facial landmanrks, and modified aspect ratios, with support for calibration of ratios according to the user.
 
+This is our B.Tech final year project, under the guidance of ***Prof.Mukul Kumar Das, Associate Professor, Department of Electronics Engineering, IIT (ISM) Dhanbad***
+
 ![Yawning screenshot](screenshots/yawning.png)
 
 ### Running
